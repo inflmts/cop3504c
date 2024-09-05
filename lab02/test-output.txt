@@ -1,0 +1,94 @@
+Welcome to Find Four!
+---------------------
+Enter height of board (rows): 2
+Error: height must be at least 4!
+Enter height of board (rows): 4
+Enter width of board (columns): 5
+ _________
+|. . . . .|
+|. . . . .|
+|. . . . .|
+|. . . . .|
+ ---------
+
+Player 1: x
+Player 2: o
+Player 1 - Select a Column: `0
+Error: not a number!
+Player 1 - Select a Column: 0
+ _________
+|. . . . .|
+|. . . . .|
+|. . . . .|
+|x . . . .|
+ ---------
+
+Player 2 - Select a Column: 5
+Error: no such column!
+Player 2 - Select a Column: 3
+ _________
+|. . . . .|
+|. . . . .|
+|. . . . .|
+|x . . o .|
+ ---------
+
+Player 1 - Select a Column: 0
+ _________
+|. . . . .|
+|. . . . .|
+|x . . . .|
+|x . . o .|
+ ---------
+
+Player 2 - Select a Column: -1
+Error: no such column!
+Player 2 - Select a Column: 1
+ _________
+|. . . . .|
+|. . . . .|
+|x . . . .|
+|x o . o .|
+ ---------
+
+Player 1 - Select a Column: 0
+ _________
+|. . . . .|
+|x . . . .|
+|x . . . .|
+|x o . o .|
+ ---------
+
+Player 2 - Select a Column: 4
+ _________
+|. . . . .|
+|x . . . .|
+|x . . . .|
+|x o . o o|
+ ---------
+
+Player 1 - Select a Column: 2
+ _________
+|. . . . .|
+|x . . . .|
+|x . . . .|
+|x o x o o|
+ ---------
+
+Player 2 - Select a Column: 2
+ _________
+|. . . . .|
+|x . . . .|
+|x . o . .|
+|x o x o o|
+ ---------
+
+Player 1 - Select a Column: 0
+ _________
+|x . . . .|
+|x . . . .|
+|x . o . .|
+|x o x o o|
+ ---------
+
+Player 1 won the game!
