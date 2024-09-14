@@ -1,0 +1,30 @@
+= Lab 04: Time Complexity & Profiling
+
+CPU: 11th Gen Intel Core i5-1145G7 @ 2.60GHz, 4 cores
+
+image::report.png[Screenshot of analyzer output]
+
+1. Why is a search for `"not_here"` the worst-case for linear search and binary search?
++
+`"not_here"` is not in the list,
+so the linear search traverses the entire list before deciding the element is not present.
+The binary search must also perform the maximum number of comparisons,
+splitting the list in half until no possible matches are left.
+
+2. Why is a search for `"mzzzz"` the average-case for linear search?
++
+`"mzzzz"` happens to be at nearly the exact center of the list,
+so the linear search algorithm must traverse half of the list before finding it.
+
+3. Why is a search for `"aaaaa"` the best-case for linear search?
++
+`"aaaaa"` is at the very beginning of the list,
+so the linear search algorithm finds it immediately.
+
+4. How do the results you saw compare to the Big-O complexity for these algorithms?
++
+TODO
+
+5. Why do the binary search results appear so similar, while the linear search results are so divergent?
++
+TODO
