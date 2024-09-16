@@ -1,11 +1,6 @@
 #!/usr/bin/env python3
 
-import subprocess
-import sys
+from shutil import which
+from subprocess import run
 
-if sys.platform == 'win32':
-    executable = 'asciidoctor-pdf.bat'
-else:
-    executable = 'asciidoctor'
-
-subprocess.run([executable, '--theme', 'default-sans', 'report.adoc'], check=True)
+run([which('asciidoctor-pdf'), '--theme', 'default-sans', 'report.adoc'], check=True)
