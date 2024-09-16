@@ -51,6 +51,10 @@ def binary_search(container, element):
             return mid
     return -1
 
+#---------------------------------------
+# Other Methods
+#---------------------------------------
+
 # This function tests both search methods by searching for
 # the specified element in a list.
 def profile_search(container, element):
