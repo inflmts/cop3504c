@@ -1,0 +1,332 @@
+Welcome to Pakudex: Tracker Extraordinaire!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 1
+
+No Pakuri currently in the Pakudex!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 2
+
+Enter the name of the species to display: Pikabu
+Error: No such Pakuri!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 3
+
+Species: Pikabu
+Level: 15
+Pakuri species Pikabu (level 15) added!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 2
+
+Enter the name of the species to display: PsyGoose
+Error: No such Pakuri!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 2
+
+Enter the name of the species to display: Pikabu
+
+Species: Pikabu
+Level: 15
+CP: 23
+HP: 2
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 3
+
+Species: Charasaurus
+Level: 10
+Pakuri species Charasaurus (level 10) added!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 3
+
+Species: PsyGoose
+Level: -1
+Level cannot be negative.
+Level: BIGLY
+Invalid level!
+Level: 1
+Pakuri species PsyGoose (level 1) added!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 3
+
+Species: Pikabu
+Error: Pakudex already contains this species!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 1
+
+Pakuri in Pakudex:
+1. Pikabu
+2. Charasaurus
+3. PsyGoose
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 6
+
+Pakuri have been sorted!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 1
+
+Pakuri in Pakudex:
+1. Charasaurus
+2. Pikabu
+3. PsyGoose
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 5
+
+Enter the name of the species to evolve: Pikabu
+Pikabu has evolved!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 2
+
+Enter the name of the species to display: Pikabu
+
+Species: Pikabu
+Level: 30
+CP: 55
+HP: 5
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 5
+
+Enter the name of the species to evolve: BoogieKnight
+Error: No such Pakuri!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 4
+
+Enter the name of the Pakuri to remove: PsyDuck
+Error: No such Pakuri!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 4
+
+Enter the name of the Pakuri to remove: Pikabu
+Pakuri Pikabu removed.
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 1
+
+Pakuri in Pakudex:
+1. Charasaurus
+2. PsyGoose
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 3
+
+Species: Pikabu
+Level: 6
+Pakuri species Pikabu (level 6) added!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 10
+
+Unrecognized menu selection!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? STFU
+
+Unrecognized menu selection!
+
+Pakudex Main Menu
+-----------------
+1. List Pakuri
+2. Show Pakuri
+3. Add Pakuri
+4. Remove Pakuri
+5. Evolve Pakuri
+6. Sort Pakuri
+7. Exit
+
+What would you like to do? 7
+
+Thanks for using Pakudex! Bye!
