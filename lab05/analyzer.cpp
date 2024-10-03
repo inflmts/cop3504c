@@ -20,8 +20,10 @@
 // Search Methods
 //--------------------------------------
 
+//
 // Uses linear search to find specified element in container.
 // Returns index of element, or -1 if not found.
+//
 int linear_search(const std::vector<std::string>& container, const std::string& element)
 {
   for (unsigned int i = 0; i < container.size(); i++)
@@ -30,8 +32,10 @@ int linear_search(const std::vector<std::string>& container, const std::string& 
   return -1;
 }
 
+//
 // Uses binary search to find specified element in container.
 // Returns index of element, or -1 if not found.
+//
 int binary_search(const std::vector<std::string>& container, const std::string& element)
 {
   int lower = 0;
@@ -54,13 +58,13 @@ int binary_search(const std::vector<std::string>& container, const std::string& 
 //--------------------------------------
 
 //
-// A simplified data generator that I made.
+// A simplified data generator.
 //
 std::vector<std::string> generate_data()
 {
   char str[6];
   int i = 0;
-  str[5] = '\0';
+  str[5] = '\0'; // terminate with null byte
 
   std::vector<std::string> dataset(26*26*26*26*26);
   for (str[0] = 'a'; str[0] <= 'z'; str[0]++)
@@ -69,31 +73,44 @@ std::vector<std::string> generate_data()
         for (str[3] = 'a'; str[3] <= 'z'; str[3]++)
           for (str[4] = 'a'; str[4] <= 'z'; str[4]++)
             dataset[i++] = str;
+
   return dataset;
 }
 
 //
-// This function tests both search methods.
+// Calls a function and records the time in milliseconds that it takes the
+// function to complete, storing it in the `time` parameter.
 //
-void profile_search(const std::vector<std::string>& container, const std::string& element)
+template<class Ret, class... Args>
+Ret measure_time(double& time, Ret (*fn)(Args...), Args&&... args)
 {
   typename std::chrono::system_clock::time_point start_time, end_time;
   std::chrono::duration<double, std::milli> delta_time;
+
+  start_time = std::chrono::system_clock::now();
+  Ret ret = fn(std::forward<Args>(args)...);
+  end_time = std::chrono::system_clock::now();
+  delta_time = std::chrono::duration_cast<decltype(delta_time)>(end_time - start_time);
+
+  time = delta_time.count();
+  return std::move(ret);
+}
+
+//
+// Tests both search methods by searching for an element in a container.
+//
+void profile_search(const std::vector<std::string>& container, const std::string& element)
+{
   int index;
+  double time;
 
-  std::cout << "Searching for '" << element << "':" << std::endl;
+  std::cout << "Searching for '\e[1m" << element << "\e[0m':" << std::endl;
 
-  start_time = std::chrono::system_clock::now();
-  index = linear_search(container, element);
-  end_time = std::chrono::system_clock::now();
-  delta_time = std::chrono::duration_cast<decltype(delta_time)>(end_time - start_time);
-  std::cout << "  linear search: found " << index << " in " << delta_time.count() << "ms" << std::endl;
+  index = measure_time(time, linear_search, container, element);
+  std::cout << "  linear search: found \e[1m" << index << "\e[0m in " << time << "ms" << std::endl;
 
-  start_time = std::chrono::system_clock::now();
-  index = binary_search(container, element);
-  end_time = std::chrono::system_clock::now();
-  delta_time = std::chrono::duration_cast<decltype(delta_time)>(end_time - start_time);
-  std::cout << "  binary search: found " << index << " in " << delta_time.count() << "ms" << std::endl;
+  index = measure_time(time, binary_search, container, element);
+  std::cout << "  binary search: found \e[1m" << index << "\e[0m in " << time << "ms" << std::endl;
 }
 
 //--------------------------------------
@@ -102,15 +119,11 @@ void profile_search(const std::vector<std::string>& container, const std::string
 
 int main()
 {
-  typename std::chrono::system_clock::time_point start_time, end_time;
-  std::chrono::duration<double, std::milli> delta_time;
+  double time;
 
   std::cout << "Generating dataset..." << std::endl;
-  start_time = std::chrono::system_clock::now();
-  std::vector<std::string> dataset = generate_data();
-  end_time = std::chrono::system_clock::now();
-  delta_time = std::chrono::duration_cast<decltype(delta_time)>(end_time - start_time);
-  std::cout << "Generated " << dataset.size() << " values in " << delta_time.count() << "ms" << std::endl;
+  std::vector<std::string> dataset = measure_time(time, generate_data);
+  std::cout << "Generated " << dataset.size() << " values in " << time << "ms" << std::endl;
 
   profile_search(dataset, "not_here");
   profile_search(dataset, "mzzzz");
