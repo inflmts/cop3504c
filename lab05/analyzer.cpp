@@ -10,8 +10,6 @@
  *  Section: 25452 (Tavassoli)
  *  Date: Oct 01 2024
  *
- *  Branch A for merge conflict.
- *
  **************************************/
 
 #include <chrono>
