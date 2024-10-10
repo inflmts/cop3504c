@@ -1,18 +1,38 @@
-########################################
+############################################################
 # File: pakuri.py
 #
-#   ------------------------------------
+#   --------------------------------------------------------
 #   Project 2: Pakudex
-#   ------------------------------------
+#   --------------------------------------------------------
 #
-#   Author: Daniel Li
+#   Author: Daniel Li <li.daniel@ufl.edu>
 #   Course: COP3504C
 #   Section: 25452
-#   Date: Oct 03 2024
+#   Date: Oct 03-09, 2024
 #
-########################################
+############################################################
 
+import math
+
+#---------------------------------------
+# Pakuri Class
+#---------------------------------------
+#
+#   This class will be the blueprint for the different critter objects that
+#   you will create. You will need to store information about the critter's
+#   species, attack level, defense level, and stamina. All variables storing
+#   information about the critters must be private (inaccessible from outside
+#   of the class per Python convention). We recommend (but do not mandate)
+#   the following variable types and names:
+#
+#       __species: str
+#       __level, __attack, __defense, __stamina: int
+#
 class Pakuri:
+
+    # __init__(self, species: str, level: int)
+    # This method should be the only constructor for this class. There should
+    # not be a default constructor!
     def __init__(self, species, level):
         self.__species = species
         self.__level = level
@@ -45,29 +65,25 @@ class Pakuri:
     def set_attack(self, new_attack):
         self.__attack = new_attack
 
-    #-----------------------------------
-    # Required Properties
-    #-----------------------------------
-
     # cp (read-only)
-    # Calculates and returns the Pakuri object’s combat power (CP).
+    # Calculates and returns the Pakuri object's combat power (CP).
     @property
     def cp(self):
-        return
+        return math.floor(self.__attack * math.sqrt(self.__defense * self.__stamina) * self.__level * 0.08)
 
     # hp (read-only)
-    # Calculates and returns the Pakuri object’s health points (HP).
+    # Calculates and returns the Pakuri object's health points (HP).
     @property
     def hp(self):
-        return
+        return math.floor(self.__stamina * self.__level / 6)
 
     # level (read-write)
-    # Gets, or sets, the Pakuri object’s level attribute.
+    # Gets, or sets, the Pakuri object's level attribute.
     @property
     def level(self):
         return self.__level
 
     @level.setter
-    def set_level(self, level):
+    def level(self, level):
         self.__level = level
 
