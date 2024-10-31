@@ -1,0 +1,51 @@
+>./cowsay
+>./cowsay Hello World!
+
+Hello World!
+       \
+        \
+         \
+        ^__^
+        (oo)\_______
+        (__)\       )\/\
+            ||----w |
+            ||     ||
+
+>./cowsay -n kitteh Moew-Moew!
+
+Moew-Moew!
+       \
+        \
+         \
+       ("`-'  '-/") .___..--' ' "`-._
+         ` *_ *  )    `-.   (      ) .`-.__. `)
+         (_Y_.) ' ._   )   `._` ;  `` -. .-'
+      _.. `--'_..-_/   /--' _ .' ,4
+   ( i l ),-''  ( l i),'  ( ( ! .-'
+
+>./cowsay -l
+Regular cows available: heifer kitteh dragon ice-dragon
+File cows available: moose turkey turtle tux
+
+>./cowsay -n ninja Hello world!
+Could not find ninja cow!
+
+>./cowsay -f tux Do you have any herring?
+
+Do you have any herring?
+        .--.
+       |o_o |
+       |:_/ |
+      //   \ \
+     (|     | )
+    /'\_   _/`\
+    \___)=(___/
+
+>./cowsay -f alien Earth is ours!
+Could not find alien cow!
+
+>./cowsay -f kitteh MEOW!!!
+Could not find kitteh cow!
+
+>./cowsay -n tux How about tuna?
+Could not find tux cow!
