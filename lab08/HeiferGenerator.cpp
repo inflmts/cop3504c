@@ -1,4 +1,4 @@
-#include <filesystem>
+//#include <filesystem>
 #include <typeinfo>
 
 #include "Cow.h"
@@ -9,9 +9,13 @@ std::vector<Cow*>& HeiferGenerator::getFileCows()
 	if (fileCows.empty())
 	{
 		// Add file cows
-		for (auto &entry : std::filesystem::directory_iterator(std::filesystem::path("cows")))
-			if (entry.path().extension() == ".cow")
-			    fileCows.push_back(new FileCow(entry.path().stem().string(), entry.path().string()));
+		//for (auto &entry : std::filesystem::directory_iterator(std::filesystem::path("cows")))
+		//	if (entry.path().extension() == ".cow")
+		//	    fileCows.push_back(new FileCow(entry.path().stem().string(), entry.path().string()));
+          fileCows.push_back(new FileCow("moose", "cows/moose.cow"));
+          fileCows.push_back(new FileCow("turkey", "cows/turkey.cow"));
+          fileCows.push_back(new FileCow("turtle", "cows/turtle.cow"));
+          fileCows.push_back(new FileCow("tux", "cows/tux.cow"));
 	}
 	
 	return fileCows;
