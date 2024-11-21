@@ -37,13 +37,13 @@ sf::Image generateMeme(sf::Image base, sf::String top_text, sf::String bottom_te
   sf::Font font;
   if (!font.loadFromFile("Cave-Story.ttf"))
     exit(-1);
-  sf::Vector2f size;
+  sf::FloatRect bounds;
   sf::Text ttext(top_text, font);
-  size = ttext.getLocalBounds().getSize();
-  ttext.setPosition(tx - (int)size.x / 2, ty - (int)size.y / 2);
+  bounds = ttext.getLocalBounds();
+  ttext.setPosition(tx - (int)(bounds.width / 2.0f), ty - (int)(bounds.height / 2.0f));
   sf::Text btext(bottom_text, font);
-  size = btext.getLocalBounds().getSize();
-  btext.setPosition(bx - (int)size.x / 2, by - (int)size.y / 2);
+  bounds = btext.getLocalBounds();
+  btext.setPosition(bx - (int)(bounds.width / 2.0f), by - (int)(bounds.height / 2.0f));
 
   // almost there!
   sf::RenderTexture canvas;
