@@ -1,3 +1,19 @@
+//////////////////////////////////////////////////////////////////////////////
+// File: memer.h
+//
+//  --------------------------------------------------------------------------
+//    Lab 10: Meme Generator
+//  --------------------------------------------------------------------------
+//
+//    AKA SFML Hell
+//
+//    Author: Daniel Li
+//    Course: COP3504C
+//    Section: 25452
+//    Date: Nov 21 2024
+//
+//////////////////////////////////////////////////////////////////////////////
+
 #ifndef LAB10_MEMER_H
 #define LAB10_MEMER_H
 
@@ -23,3 +39,5 @@ sf::Image generateMeme(sf::Image base, sf::String topText, sf::String bottomText
                        int topX = -1, int topY = -1, int bottomX = -1, int bottomY = -1);
 
 #endif
+
+// vim:tw=78

@@ -1,1 +1,1 @@
-option('sfml_dir', type: 'string')
+option('sfml_dir', type: 'string', value: '/usr')
