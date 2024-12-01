@@ -3,6 +3,7 @@
 #define MINESWEEPER_TILE_H_
 
 #include <array>
+#include <memory>
 #include <SFML/Graphics.hpp>
 
 //----------------------------------------------------------------------------
@@ -15,7 +16,7 @@
 // adjacent to the edge of the board, the neighbor pointer should be a nullptr
 // value.
 
-class Tile : public sf::Drawable
+class Tile
 {
 public:
   // Represents tile's current UI state (visualization).
@@ -55,19 +56,22 @@ private:
   bool _mine;
   State _state;
   std::array<Tile*, 8> _neighbors;
-  bool _has_content;
   sf::Sprite _base_sprite;
-  sf::Sprite _debug_sprite;
-  sf::Sprite _content_sprite;
+  std::unique_ptr<sf::Sprite> _debug_sprite;
+  std::unique_ptr<sf::Sprite> _content_sprite;
+  std::unique_ptr<sf::Sprite> _reveal_sprite;
+  float _reveal_progress;
+  float _reveal_angle;
 
-  void reveal_cascade();
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+  void reveal_cascade(float delay = 0.0f);
 
 public:
   Tile();
   void init(sf::Vector2f position, bool mine, const std::array<Tile*, 8>& neighbors);
-  void reveal();
+  void reveal(float delay = 0.0f);
   void flag();
+  void render(sf::RenderStates states);
+  void render2(sf::RenderStates states);
 };
 
 #endif

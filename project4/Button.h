@@ -15,7 +15,7 @@
 // clicking), and conveying state to the user. It will have these public
 // methods:
 
-class Button : public sf::Drawable
+class Button
 {
 public:
   // Constructs a new object at the specified _position which invokes the
@@ -37,7 +37,6 @@ private:
   sf::Sprite _sprite;
   std::unique_ptr<sf::RectangleShape> _overlay;
   sf::Sprite *_fake_sprite;
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 public:
   Button();
@@ -47,6 +46,7 @@ public:
   bool click(const sf::Event::MouseButtonEvent& event);
   void enable_overlay(const sf::Color& color);
   void disable_overlay();
+  void render(sf::RenderStates states);
 };
 
 #endif

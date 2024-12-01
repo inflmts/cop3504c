@@ -21,6 +21,15 @@ static void load_test1() { msw.reset_from_file("boards/testboard1.brd"); }
 static void load_test2() { msw.reset_from_file("boards/testboard2.brd"); }
 static void load_test3() { msw.reset_from_file("boards/testboard3.brd"); }
 
+static inline float ease_in(float t) {
+  return t * t * t;
+}
+
+static inline float ease_out(float t) {
+  t = 1.0f - t;
+  return 1.0f - t * t * t;
+}
+
 //----------------------------------------------------------------------------
 // Toolbox Class
 //----------------------------------------------------------------------------
@@ -125,9 +134,10 @@ void Toolbox::launch()
     "  ------------------------------------------------------------------\n"
     "\n"
     "    Author: Daniel Li                Keyboard shortcuts:\n"
-    "    Course: COP3504C                   q       quit\n"
-    "    Section: 25452                     d       toggle debug mode\n"
-    "    Date: Nov 31 2024                  Enter   restart\n"
+    "    Course: COP3504C                   q   quit\n"
+    "    Section: 25452                     d   toggle debug mode\n"
+    "    Date: Nov 31 2024                  r   restart\n"
+    "                                       1-3 load test boards\n"
     "\n"
     "    Random number: " << random() << "\n"
     "\n"
@@ -163,15 +173,24 @@ void Toolbox::launch()
           break;
         case sf::Event::KeyPressed:
           switch (event.key.code) {
-            case sf::Keyboard::Key::Q:
-            case sf::Keyboard::Key::Escape:
+            case sf::Keyboard::Q:
+            case sf::Keyboard::Escape:
               window.close();
               return;
-            case sf::Keyboard::Key::D:
+            case sf::Keyboard::D:
               toggle_debug();
               break;
-            case sf::Keyboard::Key::Return:
+            case sf::Keyboard::R:
               reset_random();
+              break;
+            case sf::Keyboard::Num1:
+              load_test1();
+              break;
+            case sf::Keyboard::Num2:
+              load_test2();
+              break;
+            case sf::Keyboard::Num3:
+              load_test3();
               break;
             default: ;
           }
@@ -184,8 +203,8 @@ void Toolbox::launch()
     render();
 
     dt = clock.getElapsedTime().asSeconds();
-    if (dt < 16.0f)
-      sf::sleep(sf::seconds(dt));
+    if (dt < 0.016f)
+      sf::sleep(sf::seconds(0.016f - dt));
     dt = clock.restart().asSeconds();
   }
 }
@@ -202,17 +221,18 @@ void Toolbox::reset_from_file(const char *filename)
 
 void Toolbox::render()
 {
+  sf::RenderStates states;
   window.clear(sf::Color::White);
   if (game)
-    window.draw(*game);
-  window.draw(buttons.debug);
-  window.draw(buttons.restart);
-  window.draw(buttons.test1);
-  window.draw(buttons.test2);
-  window.draw(buttons.test3);
-  window.draw(flag_counter[0]);
-  window.draw(flag_counter[1]);
-  window.draw(flag_counter[2]);
+    game->render(states);
+  buttons.debug.render(states);
+  buttons.restart.render(states);
+  buttons.test1.render(states);
+  buttons.test2.render(states);
+  buttons.test3.render(states);
+  window.draw(flag_counter[0], states);
+  window.draw(flag_counter[1], states);
+  window.draw(flag_counter[2], states);
   window.display();
 }
 
@@ -263,6 +283,11 @@ void Toolbox::debug(bool debug)
 void Toolbox::toggle_debug()
 {
   debug(!_debug);
+}
+
+float Toolbox::randomfloat(float a, float b)
+{
+  return a + (float)random() / random.max() * (b - a);
 }
 
 Toolbox Toolbox::instance;
@@ -344,11 +369,11 @@ void Button::disable_overlay()
   _overlay.reset();
 }
 
-void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const
+void Button::render(sf::RenderStates states)
 {
-  target.draw(_sprite, states);
+  msw.window.draw(_sprite, states);
   if (_overlay)
-    target.draw(*_overlay, states);
+    msw.window.draw(*_overlay, states);
 }
 
 //----------------------------------------------------------------------------
@@ -365,7 +390,7 @@ std::array<Tile*, 8>& Tile::getNeighbors() { return _neighbors; }
 void Tile::setNeighbors(std::array<Tile*, 8> neighbors) { _neighbors = neighbors; }
 void Tile::onClickLeft() { reveal(); }
 void Tile::onClickRight() { flag(); }
-void Tile::draw() { draw(msw.window, sf::RenderStates::Default); }
+void Tile::draw() { render(sf::RenderStates::Default); }
 
 void Tile::revealNeighbors()
 {
@@ -378,21 +403,11 @@ void Tile::revealNeighbors()
 
 // Use these
 
-void Tile::reveal_cascade()
+void Tile::reveal_cascade(float delay)
 {
   for (int i = 0; i < 8; i++)
     if (_neighbors[i])
-      _neighbors[i]->reveal();
-}
-
-void Tile::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-  states.transform.translate(_position);
-  target.draw(_base_sprite, states);
-  if (_mine && msw.debug())
-    target.draw(_debug_sprite, states);
-  if (_has_content)
-    target.draw(_content_sprite, states);
+      _neighbors[i]->reveal(delay);
 }
 
 Tile::Tile() {}
@@ -403,37 +418,38 @@ void Tile::init(sf::Vector2f position, bool mine, const std::array<Tile*, 8>& ne
   _mine = mine;
   _state = State::HIDDEN;
   _neighbors = neighbors;
-  _has_content = false;
 
   _base_sprite.setTexture(msw.textures.tile_hidden);
   if (_mine)
-    _debug_sprite.setTexture(msw.textures.mine_debug);
+    _debug_sprite = std::make_unique<sf::Sprite>(msw.textures.mine_debug);
 }
 
-void Tile::reveal()
+void Tile::reveal(float delay)
 {
   if (msw.game->getPlayStatus() != GameState::PlayStatus::PLAYING)
     return;
   if (_state != State::HIDDEN)
     return;
+
   _state = State::REVEALED;
   _base_sprite.setTexture(msw.textures.tile_revealed);
   _base_sprite.setColor(sf::Color(0xd0, 0xd0, 0xd0));
+  _reveal_sprite = std::make_unique<sf::Sprite>(msw.textures.tile_hidden);
+  _reveal_sprite->setOrigin(16, 16);
+  _reveal_progress = -delay;
+  _reveal_angle = msw.randomfloat(-60, 60);
   if (_mine) {
-    _content_sprite.setTexture(msw.textures.mine);
-    _has_content = true;
+    _content_sprite = std::make_unique<sf::Sprite>(msw.textures.mine);
     msw.game->lose();
   } else {
     int count = 0;
     for (int i = 0; i < 8; i++)
       if (_neighbors[i] && _neighbors[i]->_mine)
         ++count;
-    if (count) {
-      _content_sprite.setTexture(msw.textures.number[count - 1]);
-      _has_content = true;
-    } else {
-      reveal_cascade();
-    }
+    if (count)
+      _content_sprite = std::make_unique<sf::Sprite>(msw.textures.number[count - 1]);
+    else
+      reveal_cascade(delay + 0.01f);
     msw.game->decrement_hidden_count();
   }
 }
@@ -444,13 +460,48 @@ void Tile::flag()
     return;
   if (_state == State::HIDDEN) {
     _state = State::FLAGGED;
-    _content_sprite.setTexture(msw.textures.flag);
-    _has_content = true;
+    _content_sprite = std::make_unique<sf::Sprite>(msw.textures.flag);
     msw.game->adjust_flag_count(-1);
   } else if (_state == State::FLAGGED) {
     _state = State::HIDDEN;
-    _has_content = false;
+    _content_sprite.reset();
     msw.game->adjust_flag_count(1);
+  }
+}
+
+void Tile::render(sf::RenderStates states)
+{
+  states.transform.translate(_position);
+
+  msw.window.draw(_base_sprite, states);
+  if (_debug_sprite && msw.debug())
+    msw.window.draw(*_debug_sprite, states);
+  if (_content_sprite)
+    msw.window.draw(*_content_sprite, states);
+}
+
+void Tile::render2(sf::RenderStates states)
+{
+  if (_reveal_sprite) {
+    float t = (_reveal_progress += msw.dt) / 0.3f;
+    if (t < 1.0f) {
+      if (t < 0.0f)
+        t = 0.0f;
+      float i = ease_in(t);
+      float rotation = t * _reveal_angle;
+      float scale = 1.0f + 0.25f * i;
+      float opacity = 1.0f - t;
+      float offset = 32.0f * i;
+      _reveal_sprite->setPosition(16, 16 + offset);
+      _reveal_sprite->setRotation(rotation);
+      _reveal_sprite->setScale(scale, scale);
+      _reveal_sprite->setColor(sf::Color(0xff, 0xff, 0xff, (unsigned char)(opacity * 255.0f)));
+
+      states.transform.translate(_position);
+      msw.window.draw(*_reveal_sprite, states);
+    } else {
+      _reveal_sprite.reset();
+    }
   }
 }
 
@@ -563,6 +614,7 @@ void GameState::init(int width, int height, char *grid)
   _mine_count = 0;
   _tiles = new Tile[width * height];
   _tiles_end = _tiles + width * height;
+  _shake = 10;
 
   std::array<Tile*, 8> neighbors;
   for (int i = 0, y = 0; y < height; y++) {
@@ -584,13 +636,6 @@ void GameState::init(int width, int height, char *grid)
 
   _flag_count = _mine_count;
   _hidden_count = width * height;
-}
-
-void GameState::draw(sf::RenderTarget& target, sf::RenderStates states) const
-{
-  states.transform *= _transform;
-  for (Tile *tile = _tiles; tile < _tiles_end; tile++)
-    target.draw(*tile, states);
 }
 
 GameState::~GameState()
@@ -650,7 +695,25 @@ void GameState::lose()
   if (_status != PlayStatus::PLAYING)
     return;
   _status = PlayStatus::LOSS;
+  _shake = 45;
   msw.buttons.restart.texture(msw.textures.face_lose);
+}
+
+void GameState::render(sf::RenderStates states)
+{
+  states.transform *= _transform;
+
+  if (_shake) {
+    float dx = msw.randomfloat(-1.0f, 1.0f);
+    float dy = msw.randomfloat(-1.0f, 1.0f);
+    states.transform.translate(sf::Vector2f(dx * _shake, dy * _shake));
+    --_shake;
+  }
+
+  for (Tile *tile = _tiles; tile < _tiles_end; tile++)
+    tile->render(states);
+  for (Tile *tile = _tiles; tile < _tiles_end; tile++)
+    tile->render2(states);
 }
 
 //----------------------------------------------------------------------------

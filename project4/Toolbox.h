@@ -87,6 +87,7 @@ public:
   bool debug();
   void debug(bool debug);
   void toggle_debug();
+  float randomfloat(float a, float b);
 
   static Toolbox instance;
 };

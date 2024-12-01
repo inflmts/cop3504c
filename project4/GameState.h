@@ -12,7 +12,7 @@
 // The GameState object should contain the Tile objects that represent the
 // locations in the game and play status.
 
-class GameState : public sf::Drawable
+class GameState
 {
 public:
   // Tracks the play status of the game, which is reflected in the behavior of
@@ -47,11 +47,12 @@ private:
   int _hidden_count;
   Tile *_tiles;
   Tile *_tiles_end;
+  unsigned int _shake;
+
   sf::Transform _transform;
   sf::Transform _inverse_transform;
 
   void init(int width, int height, char *grid);
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 public:
   ~GameState();
@@ -63,6 +64,7 @@ public:
   void decrement_hidden_count();
   void win();
   void lose();
+  void render(sf::RenderStates states);
 };
 
 #endif
