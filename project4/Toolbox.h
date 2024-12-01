@@ -64,6 +64,7 @@ public:
     sf::Texture debug;
     sf::Texture test1;
     sf::Texture test2;
+    sf::Texture test3;
   } textures;
 
   struct {
@@ -71,6 +72,7 @@ public:
     Button restart;
     Button test1;
     Button test2;
+    Button test3;
   } buttons;
 
   sf::Sprite flag_counter[3];

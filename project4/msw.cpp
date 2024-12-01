@@ -1,12 +1,11 @@
 // vim:tw=78
-#include <algorithm>
-#include <cmath>
+#include <algorithm> // std::min()
+#include <cmath> // floor()
 #include <cstdlib>
 #include <cstring>
-#include <ctime>
+#include <ctime> // time()
 #include <fstream>
 #include <iostream>
-#include <memory>
 #include <random>
 #include <string>
 
@@ -20,7 +19,7 @@ static Toolbox& msw = Toolbox::instance;
 
 static void load_test1() { msw.reset_from_file("boards/testboard1.brd"); }
 static void load_test2() { msw.reset_from_file("boards/testboard2.brd"); }
-//static void load_test3() { msw.reset_from_file("boards/testboard3.brd"); }
+static void load_test3() { msw.reset_from_file("boards/testboard3.brd"); }
 
 //----------------------------------------------------------------------------
 // Toolbox Class
@@ -69,11 +68,13 @@ Toolbox::Toolbox()
   load_texture(textures.debug, "images/debug.png");
   load_texture(textures.test1, "images/test_1.png");
   load_texture(textures.test2, "images/test_2.png");
+  load_texture(textures.test3, "images/Test_3.png");
 
   buttons.debug.init(textures.debug, toggleDebugMode);
   buttons.restart.init(textures.face_happy, restart);
   buttons.test1.init(textures.test1, load_test1);
   buttons.test2.init(textures.test2, load_test2);
+  buttons.test3.init(textures.test3, load_test3);
 
   flag_counter[0].setTexture(textures.digits);
   flag_counter[1].setTexture(textures.digits);
@@ -119,21 +120,16 @@ void Toolbox::launch()
 
   std::cout <<
     "\n"
-    "  ------------------------------\n"
-    "    Project 4: Minesweeper  \n"
-    "  ------------------------------\n"
+    "  ------------------------------------------------------------------\n"
+    "                        Project 4: Minesweeper\n"
+    "  ------------------------------------------------------------------\n"
     "\n"
-    "    Author: Daniel Li\n"
-    "    Course: COP3504C\n"
-    "    Section: 25452\n"
-    "    Date: 2024/11/31\n"
+    "    Author: Daniel Li                Keyboard shortcuts:\n"
+    "    Course: COP3504C                   q       quit\n"
+    "    Section: 25452                     d       toggle debug mode\n"
+    "    Date: Nov 31 2024                  Enter   restart\n"
     "\n"
     "    Random number: " << random() << "\n"
-    "\n"
-    "    Keyboard shortcuts:\n"
-    "\n"
-    "       q   quit\n"
-    "       d   debug mode\n"
     "\n"
   ;
 
@@ -158,6 +154,7 @@ void Toolbox::launch()
           break;
         case sf::Event::MouseButtonPressed:
           if ((game && game->click(event.mouseButton)) ||
+              buttons.test3.click(event.mouseButton) ||
               buttons.test2.click(event.mouseButton) ||
               buttons.test1.click(event.mouseButton) ||
               buttons.restart.click(event.mouseButton) ||
@@ -172,6 +169,9 @@ void Toolbox::launch()
               return;
             case sf::Keyboard::Key::D:
               toggle_debug();
+              break;
+            case sf::Keyboard::Key::Return:
+              reset_random();
               break;
             default: ;
           }
@@ -209,6 +209,7 @@ void Toolbox::render()
   window.draw(buttons.restart);
   window.draw(buttons.test1);
   window.draw(buttons.test2);
+  window.draw(buttons.test3);
   window.draw(flag_counter[0]);
   window.draw(flag_counter[1]);
   window.draw(flag_counter[2]);
@@ -224,8 +225,9 @@ void Toolbox::update_view()
 
   buttons.debug.position(12, height - 76);
   buttons.restart.position(width / 2 - 32, height - 76);
-  buttons.test1.position(width - 140, height - 76);
-  buttons.test2.position(width - 76, height - 76);
+  buttons.test1.position(width - 204, height - 76);
+  buttons.test2.position(width - 140, height - 76);
+  buttons.test3.position(width - 76, height - 76);
 
   flag_counter[0].setPosition(88, height - 60);
   flag_counter[1].setPosition(109, height - 60);
@@ -353,6 +355,8 @@ void Button::draw(sf::RenderTarget& target, sf::RenderStates states) const
 // Tile Class
 //----------------------------------------------------------------------------
 
+// Don't use these
+
 Tile::Tile(sf::Vector2f position) { _position = position; }
 sf::Vector2f Tile::getLocation() { return _position; }
 Tile::State Tile::getState() { return _state; }
@@ -361,7 +365,7 @@ std::array<Tile*, 8>& Tile::getNeighbors() { return _neighbors; }
 void Tile::setNeighbors(std::array<Tile*, 8> neighbors) { _neighbors = neighbors; }
 void Tile::onClickLeft() { reveal(); }
 void Tile::onClickRight() { flag(); }
-void Tile::draw() { /* no-op */ }
+void Tile::draw() { draw(msw.window, sf::RenderStates::Default); }
 
 void Tile::revealNeighbors()
 {
@@ -371,6 +375,8 @@ void Tile::revealNeighbors()
     }
   }
 }
+
+// Use these
 
 void Tile::reveal_cascade()
 {
@@ -398,10 +404,6 @@ void Tile::init(sf::Vector2f position, bool mine, const std::array<Tile*, 8>& ne
   _state = State::HIDDEN;
   _neighbors = neighbors;
   _has_content = false;
-
-  _base_sprite.setScale(0.03125f, 0.03125f);
-  _debug_sprite.setScale(0.03125f, 0.03125f);
-  _content_sprite.setScale(0.03125f, 0.03125f);
 
   _base_sprite.setTexture(msw.textures.tile_hidden);
   if (_mine)
@@ -574,7 +576,7 @@ void GameState::init(int width, int height, char *grid)
       neighbors[5] = getTile(x - 1, y + 1);
       neighbors[6] = getTile(x, y + 1);
       neighbors[7] = getTile(x + 1, y + 1);
-      _tiles[i].init(sf::Vector2f(x, y), mine, neighbors);
+      _tiles[i].init(sf::Vector2f(x, y) * 32.0f, mine, neighbors);
       if (mine)
         ++_mine_count;
     }
@@ -600,9 +602,11 @@ void GameState::update_transform()
 {
   sf::Vector2u size = msw.window.getSize();
   sf::FloatRect rect(12, 12, size.x - 24, size.y - 100);
-  float scale = std::min(rect.width / _width, rect.height / _height);
-  float tx = rect.left + (rect.width - (_width * scale)) / 2;
-  float ty = rect.top + (rect.height - (_height * scale)) / 2;
+  float pxwidth = _width * 32;
+  float pxheight = _height * 32;
+  float scale = std::min(rect.width / pxwidth, rect.height / pxheight);
+  float tx = rect.left + (rect.width - (pxwidth * scale)) / 2;
+  float ty = rect.top + (rect.height - (pxheight * scale)) / 2;
   _transform = sf::Transform(scale, 0, tx, 0, scale, ty, 0, 0, 1);
   _inverse_transform = sf::Transform(1 / scale, 0, -tx / scale, 0, 1 / scale, -ty / scale, 0, 0, 1);
 }
@@ -610,7 +614,7 @@ void GameState::update_transform()
 bool GameState::click(const sf::Event::MouseButtonEvent& event)
 {
   sf::Vector2f coords = _inverse_transform * sf::Vector2f(event.x, event.y);
-  Tile *tile = getTile(floor(coords.x), floor(coords.y));
+  Tile *tile = getTile(floor(coords.x / 32), floor(coords.y / 32));
   if (tile) {
     if (event.button == sf::Mouse::Button::Left)
       tile->reveal();
