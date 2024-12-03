@@ -38,7 +38,9 @@ private:
   std::unique_ptr<sf::RectangleShape> _overlay;
   sf::Sprite *_fake_sprite;
 
-public:
+//public:
+  friend class GameState;
+  friend class Toolbox;
   Button();
   void init(const sf::Texture& texture, std::function<void(void)> callback);
   void position(float x, float y);

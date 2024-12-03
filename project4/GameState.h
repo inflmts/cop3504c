@@ -38,6 +38,8 @@ public:
 
   /**************************************************************************/
 
+  ~GameState();
+
 private:
   int _width;
   int _height;
@@ -54,8 +56,9 @@ private:
 
   void init(int width, int height, char *grid);
 
-public:
-  ~GameState();
+//public:
+  friend class Toolbox;
+  friend class Tile;
   void update_transform();
   //const sf::Transform& transform();
   //const sf::Transform& inverse_transform();

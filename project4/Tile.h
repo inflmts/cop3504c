@@ -65,7 +65,8 @@ private:
 
   void reveal_cascade(float delay = 0.0f);
 
-public:
+//public:
+  friend class GameState;
   Tile();
   void init(sf::Vector2f position, bool mine, const std::array<Tile*, 8>& neighbors);
   void reveal(float delay = 0.0f);
