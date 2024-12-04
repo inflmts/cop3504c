@@ -50,6 +50,7 @@ public:
   std::mt19937 random;
   float dt;
 
+  // I was told this is kosher.
   struct {
     sf::Texture mine;
     sf::Texture mine_debug;

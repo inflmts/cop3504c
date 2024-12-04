@@ -2,8 +2,6 @@
 #ifndef MINESWEEPER_H_
 #define MINESWEEPER_H_
 
-#include "GameState.h"
-
 //----------------------------------------------------------------------------
 // Global Functions
 //----------------------------------------------------------------------------
@@ -32,5 +30,16 @@ void toggleDebugMode();
 bool getDebugMode();
 
 /****************************************************************************/
+
+// Students may add functions, as needed, to implement the program.
+
+static inline float ease_in(float t) {
+  return t * t * t;
+}
+
+static inline float ease_out(float t) {
+  t = 1.0f - t;
+  return 1.0f - t * t * t;
+}
 
 #endif

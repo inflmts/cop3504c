@@ -10,6 +10,11 @@
 //    Section: 25452
 //    Date: Nov 31 2024
 //
+//    The specification is awful. This will end up being either really dirty
+//    (make everything friends, stuff everything in Toolbox) or really
+//    inefficient (recompute everything every time because we have no way of
+//    passing around information).
+//
 //////////////////////////////////////////////////////////////////////////////
 
 #include <algorithm> // std::min()
@@ -28,20 +33,8 @@
 #include "Toolbox.h"
 #include "minesweeper.h"
 
-static Toolbox& msw = Toolbox::instance;
-
-static void load_test1() { msw.reset_from_file("boards/testboard1.brd"); }
-static void load_test2() { msw.reset_from_file("boards/testboard2.brd"); }
-static void load_test3() { msw.reset_from_file("boards/testboard3.brd"); }
-
-static inline float ease_in(float t) {
-  return t * t * t;
-}
-
-static inline float ease_out(float t) {
-  t = 1.0f - t;
-  return 1.0f - t * t * t;
-}
+// I hate this.
+//static Toolbox& msw = Toolbox::instance;
 
 //----------------------------------------------------------------------------
 // Toolbox Class
@@ -94,9 +87,10 @@ Toolbox::Toolbox()
 
   buttons.debug.init(textures.debug, toggleDebugMode);
   buttons.restart.init(textures.face_happy, restart);
-  buttons.test1.init(textures.test1, load_test1);
-  buttons.test2.init(textures.test2, load_test2);
-  buttons.test3.init(textures.test3, load_test3);
+
+  buttons.test1.init(textures.test1, [] { /*msw*/Toolbox::instance.reset_from_file("boards/testboard1.brd"); });
+  buttons.test2.init(textures.test2, [] { /*msw*/Toolbox::instance.reset_from_file("boards/testboard2.brd"); });
+  buttons.test3.init(textures.test3, [] { /*msw*/Toolbox::instance.reset_from_file("boards/testboard3.brd"); });
 
   flag_counter[0].setTexture(textures.digits);
   flag_counter[1].setTexture(textures.digits);
@@ -105,7 +99,7 @@ Toolbox::Toolbox()
 
 Toolbox& Toolbox::getInstance()
 {
-  return msw;
+  return /*msw*/Toolbox::instance;
 }
 
 void Toolbox::reset(GameState *g)
@@ -113,6 +107,7 @@ void Toolbox::reset(GameState *g)
   gameState = g;
   game.reset(g);
   buttons.restart.texture(textures.face_happy);
+  debug(false);
   update_view();
   update_flag_counter();
 }
@@ -138,7 +133,7 @@ void Toolbox::load_texture(sf::Texture& texture, const sf::Image& image)
 void Toolbox::launch()
 {
   //random.seed(0x20241201);
-  msw.random.seed(time(nullptr));
+  /*msw*/Toolbox::instance.random.seed(time(nullptr));
 
   std::cout <<
     "\n"
@@ -197,13 +192,13 @@ void Toolbox::launch()
               reset_random();
               break;
             case sf::Keyboard::Num1:
-              load_test1();
+              /*msw*/Toolbox::instance.reset_from_file("boards/testboard1.brd");
               break;
             case sf::Keyboard::Num2:
-              load_test2();
+              /*msw*/Toolbox::instance.reset_from_file("boards/testboard2.brd");
               break;
             case sf::Keyboard::Num3:
-              load_test3();
+              /*msw*/Toolbox::instance.reset_from_file("boards/testboard3.brd");
               break;
             default: ;
           }
@@ -384,9 +379,9 @@ void Button::disable_overlay()
 
 void Button::render(sf::RenderStates states)
 {
-  msw.window.draw(_sprite, states);
+  /*msw*/Toolbox::instance.window.draw(_sprite, states);
   if (_overlay)
-    msw.window.draw(*_overlay, states);
+    /*msw*/Toolbox::instance.window.draw(*_overlay, states);
 }
 
 //----------------------------------------------------------------------------
@@ -432,53 +427,53 @@ void Tile::init(sf::Vector2f position, bool mine, const std::array<Tile*, 8>& ne
   _state = State::HIDDEN;
   _neighbors = neighbors;
 
-  _base_sprite.setTexture(msw.textures.tile_hidden);
+  _base_sprite.setTexture(/*msw*/Toolbox::instance.textures.tile_hidden);
   if (_mine)
-    _debug_sprite = std::make_unique<sf::Sprite>(msw.textures.mine_debug);
+    _debug_sprite = std::make_unique<sf::Sprite>(/*msw*/Toolbox::instance.textures.mine_debug);
 }
 
 void Tile::reveal(float delay)
 {
-  if (msw.game->getPlayStatus() != GameState::PlayStatus::PLAYING)
+  if (/*msw*/Toolbox::instance.game->getPlayStatus() != GameState::PlayStatus::PLAYING)
     return;
   if (_state != State::HIDDEN)
     return;
 
   _state = State::REVEALED;
-  _base_sprite.setTexture(msw.textures.tile_revealed);
+  _base_sprite.setTexture(/*msw*/Toolbox::instance.textures.tile_revealed);
   _base_sprite.setColor(sf::Color(0xd0, 0xd0, 0xd0));
-  _reveal_sprite = std::make_unique<sf::Sprite>(msw.textures.tile_hidden);
+  _reveal_sprite = std::make_unique<sf::Sprite>(/*msw*/Toolbox::instance.textures.tile_hidden);
   _reveal_sprite->setOrigin(16, 16);
   _reveal_progress = -delay;
-  _reveal_angle = msw.randomfloat(-60, 60);
+  _reveal_angle = /*msw*/Toolbox::instance.randomfloat(-60, 60);
   if (_mine) {
-    _content_sprite = std::make_unique<sf::Sprite>(msw.textures.mine);
-    msw.game->lose();
+    _content_sprite = std::make_unique<sf::Sprite>(/*msw*/Toolbox::instance.textures.mine);
+    /*msw*/Toolbox::instance.game->lose();
   } else {
     int count = 0;
     for (int i = 0; i < 8; i++)
       if (_neighbors[i] && _neighbors[i]->_mine)
         ++count;
     if (count)
-      _content_sprite = std::make_unique<sf::Sprite>(msw.textures.number[count - 1]);
+      _content_sprite = std::make_unique<sf::Sprite>(/*msw*/Toolbox::instance.textures.number[count - 1]);
     else
       reveal_cascade(delay + 0.01f);
-    msw.game->decrement_hidden_count();
+    /*msw*/Toolbox::instance.game->decrement_hidden_count();
   }
 }
 
 void Tile::flag()
 {
-  if (msw.game->getPlayStatus() != GameState::PlayStatus::PLAYING)
+  if (/*msw*/Toolbox::instance.game->getPlayStatus() != GameState::PlayStatus::PLAYING)
     return;
   if (_state == State::HIDDEN) {
     _state = State::FLAGGED;
-    _content_sprite = std::make_unique<sf::Sprite>(msw.textures.flag);
-    msw.game->adjust_flag_count(-1);
+    _content_sprite = std::make_unique<sf::Sprite>(/*msw*/Toolbox::instance.textures.flag);
+    /*msw*/Toolbox::instance.game->adjust_flag_count(-1);
   } else if (_state == State::FLAGGED) {
     _state = State::HIDDEN;
     _content_sprite.reset();
-    msw.game->adjust_flag_count(1);
+    /*msw*/Toolbox::instance.game->adjust_flag_count(1);
   }
 }
 
@@ -486,17 +481,17 @@ void Tile::render(sf::RenderStates states)
 {
   states.transform.translate(_position);
 
-  msw.window.draw(_base_sprite, states);
-  if (_debug_sprite && msw.debug())
-    msw.window.draw(*_debug_sprite, states);
+  /*msw*/Toolbox::instance.window.draw(_base_sprite, states);
+  if (_debug_sprite && /*msw*/Toolbox::instance.debug())
+    /*msw*/Toolbox::instance.window.draw(*_debug_sprite, states);
   if (_content_sprite)
-    msw.window.draw(*_content_sprite, states);
+    /*msw*/Toolbox::instance.window.draw(*_content_sprite, states);
 }
 
 void Tile::render2(sf::RenderStates states)
 {
   if (_reveal_sprite) {
-    float t = (_reveal_progress += msw.dt) / 0.3f;
+    float t = (_reveal_progress += /*msw*/Toolbox::instance.dt) / 0.3f;
     if (t < 1.0f) {
       if (t < 0.0f)
         t = 0.0f;
@@ -511,7 +506,7 @@ void Tile::render2(sf::RenderStates states)
       _reveal_sprite->setColor(sf::Color(0xff, 0xff, 0xff, (unsigned char)(opacity * 255.0f)));
 
       states.transform.translate(_position);
-      msw.window.draw(*_reveal_sprite, states);
+      /*msw*/Toolbox::instance.window.draw(*_reveal_sprite, states);
     } else {
       _reveal_sprite.reset();
     }
@@ -538,7 +533,7 @@ GameState::GameState(sf::Vector2i dim, int mines)
     index[i] = &grid[i];
 
   while (mines > 0) {
-    char*& p = index[msw.random() % empty]; // Bad idea? I could care less
+    char*& p = index[/*msw*/Toolbox::instance.random() % empty]; // Bad idea? I could care less
     *p = 1;
     p = index[--empty];
     --mines;
@@ -658,7 +653,7 @@ GameState::~GameState()
 
 void GameState::update_transform()
 {
-  sf::Vector2u size = msw.window.getSize();
+  sf::Vector2u size = /*msw*/Toolbox::instance.window.getSize();
   sf::FloatRect rect(12, 12, size.x - 24, size.y - 100);
   float pxwidth = _width * 32;
   float pxheight = _height * 32;
@@ -686,7 +681,7 @@ bool GameState::click(const sf::Event::MouseButtonEvent& event)
 void GameState::adjust_flag_count(int diff)
 {
   _flag_count += diff;
-  msw.update_flag_counter();
+  /*msw*/Toolbox::instance.update_flag_counter();
 }
 
 void GameState::decrement_hidden_count()
@@ -700,7 +695,7 @@ void GameState::win()
   if (_status != PlayStatus::PLAYING)
     return;
   _status = PlayStatus::WIN;
-  msw.buttons.restart.texture(msw.textures.face_win);
+  /*msw*/Toolbox::instance.buttons.restart.texture(/*msw*/Toolbox::instance.textures.face_win);
 }
 
 void GameState::lose()
@@ -709,7 +704,7 @@ void GameState::lose()
     return;
   _status = PlayStatus::LOSS;
   _shake = 45;
-  msw.buttons.restart.texture(msw.textures.face_lose);
+  /*msw*/Toolbox::instance.buttons.restart.texture(/*msw*/Toolbox::instance.textures.face_lose);
 }
 
 void GameState::render(sf::RenderStates states)
@@ -717,8 +712,8 @@ void GameState::render(sf::RenderStates states)
   states.transform *= _transform;
 
   if (_shake) {
-    float dx = msw.randomfloat(-1.0f, 1.0f);
-    float dy = msw.randomfloat(-1.0f, 1.0f);
+    float dx = /*msw*/Toolbox::instance.randomfloat(-1.0f, 1.0f);
+    float dy = /*msw*/Toolbox::instance.randomfloat(-1.0f, 1.0f);
     states.transform.translate(sf::Vector2f(dx * _shake, dy * _shake));
     --_shake;
   }
@@ -733,11 +728,11 @@ void GameState::render(sf::RenderStates states)
 // Global Functions
 //----------------------------------------------------------------------------
 
-int launch() { msw.launch(); return 0; }
-void restart() { msw.reset_random(); }
-void render() { msw.render(); }
-void toggleDebugMode() { msw.toggle_debug(); }
-bool getDebugMode() { return msw.debug(); }
+int launch() { /*msw*/Toolbox::instance.launch(); return 0; }
+void restart() { /*msw*/Toolbox::instance.reset_random(); }
+void render() { /*msw*/Toolbox::instance.render(); }
+void toggleDebugMode() { /*msw*/Toolbox::instance.toggle_debug(); }
+bool getDebugMode() { return /*msw*/Toolbox::instance.debug(); }
 
 // Finally, the main() function should be defined exactly as follows:
 int main() { return launch(); } // OK
